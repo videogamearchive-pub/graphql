@@ -2,12 +2,12 @@ use crate::games::stores::{GamesStore, GamesStoreError};
 use crate::games::Game;
 use async_trait::async_trait;
 
-pub struct SqliteGamesStore {
+pub struct GamesStoreSqlite {
     pub pool: sqlx::Pool<sqlx::Sqlite>,
 }
 
 #[async_trait]
-impl GamesStore for SqliteGamesStore {
+impl GamesStore for GamesStoreSqlite {
     async fn get_all(&self) -> Result<Vec<Game>, GamesStoreError> {
         sqlx::query_as!(
             Game,

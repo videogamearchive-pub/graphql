@@ -2,6 +2,7 @@ pub mod environment;
 pub mod games;
 pub mod graphql;
 pub mod platforms;
+pub mod utils;
 
 use crate::games::stores::sqlite::GamesStoreSqlite;
 use crate::platforms::graphql::Query;

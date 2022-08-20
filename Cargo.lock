@@ -2588,8 +2588,10 @@ dependencies = [
  "async-graphql-tide",
  "async-std",
  "async-trait",
+ "base64 0.13.0",
  "lazy_static",
  "serde",
+ "serde_json",
  "sqlx",
  "tide",
 ]

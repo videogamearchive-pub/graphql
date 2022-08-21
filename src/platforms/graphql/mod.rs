@@ -1,7 +1,7 @@
 use crate::games::stores::sqlite::GamesStoreSqlite;
 use crate::games::stores::GamesStore;
 use crate::games::Game;
-use crate::graphql::Base64Cursor;
+use crate::graphql::Base64JsonCursor;
 use crate::platforms::stores::sqlite::PlatformsStoreSqlite;
 use crate::platforms::stores::PlatformsStore;
 use crate::platforms::Platform;
@@ -17,13 +17,13 @@ impl Query {
         ctx: &Context<'_>,
         after: Option<String>,
         #[graphql(validator(maximum = 25))] first: Option<i32>,
-    ) -> Result<Connection<Base64Cursor<String>, Platform>> {
+    ) -> Result<Connection<Base64JsonCursor<String>, Platform>> {
         query(
             after,
             None,
             first,
             None,
-            |after: Option<Base64Cursor<String>>, _, first, _| async move {
+            |after: Option<Base64JsonCursor<String>>, _, first, _| async move {
                 let platforms = ctx
                     .data_unchecked::<PlatformsStoreSqlite>()
                     .get_all(first, after.map(|c| c.0))
@@ -34,7 +34,7 @@ impl Query {
                 let mut connection = Connection::new(false, has_next_page);
                 connection.edges = platforms
                     .into_iter()
-                    .map(|platform| Edge::new(Base64Cursor(platform.name.clone()), platform))
+                    .map(|platform| Edge::new(Base64JsonCursor(platform.name.clone()), platform))
                     .collect();
 
                 Ok::<_, Error>(connection)
@@ -51,13 +51,13 @@ impl Platform {
         ctx: &Context<'_>,
         after: Option<String>,
         #[graphql(validator(maximum = 25))] first: Option<i32>,
-    ) -> Result<Connection<Base64Cursor<String>, Game>> {
+    ) -> Result<Connection<Base64JsonCursor<String>, Game>> {
         query(
             after,
             None,
             first,
             None,
-            |after: Option<Base64Cursor<String>>, _, first, _| async move {
+            |after: Option<Base64JsonCursor<String>>, _, first, _| async move {
                 let games = ctx
                     .data_unchecked::<GamesStoreSqlite>()
                     .get_all_by_platform(self.id, first, after.map(|c| c.0))
@@ -68,7 +68,7 @@ impl Platform {
                 let mut connection = Connection::new(false, has_next_page);
                 connection.edges = games
                     .into_iter()
-                    .map(|platform| Edge::new(Base64Cursor(platform.name.clone()), platform))
+                    .map(|platform| Edge::new(Base64JsonCursor(platform.name.clone()), platform))
                     .collect();
 
                 Ok::<_, Error>(connection)

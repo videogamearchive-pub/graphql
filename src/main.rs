@@ -39,7 +39,8 @@ async fn main() -> tide::Result<()> {
 
     app.at("/graphql").post(async_graphql_tide::graphql(schema));
 
-    app.listen("127.0.0.1:8080").await?;
+    println!("Listening on http://{}", *environment::HTTP_ADDRESS);
+    app.listen(environment::HTTP_ADDRESS.clone()).await?;
 
     Ok(())
 }

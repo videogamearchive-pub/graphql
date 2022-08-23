@@ -1,0 +1,9 @@
+.dockerignore
+Dockerfile
+
+.git
+.gitignore
+
+target
+
+db/sqlite.db

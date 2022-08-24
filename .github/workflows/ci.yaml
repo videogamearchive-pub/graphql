@@ -1,0 +1,64 @@
+on: [push]
+
+name: CI
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: sqlite:file:./db/sqlite.db
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v3
+        with:
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+      - run: cargo install sqlx-cli || true
+      - run: cargo sqlx database setup --source db/migrations
+      - run: cargo build --verbose
+
+  clippy:
+    name: Clippy
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: sqlite:file:./db/sqlite.db
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v3
+        with:
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+      - run: cargo install sqlx-cli || true
+      - run: cargo sqlx database setup --source db/migrations
+      - run: cargo clippy -- -D warnings
+
+  format:
+    name: Format
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: sqlite:file:./db/sqlite.db
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v3
+        with:
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+      - run: cargo install sqlx-cli || true
+      - run: cargo sqlx database setup --source db/migrations
+      - run: cargo fmt --check
